@@ -21,11 +21,15 @@ x, y = su.shuffle(boston.data, boston.target, random_state=7)
 train_size = int(len(x) * 0.8)
 train_x, test_x, train_y, test_y = x[:train_size], x[train_size:],\
                                    y[:train_size], y[train_size:]
+
+"""
+正向激励模型
+"""
 # 构建决策树模型, 训练模型
 model = st.DecisionTreeRegressor(max_depth=5)
 
 # 构建正向激励决策树模型
-model = se.AdaBoostRegressor(model, n_estimators=400, random_state=7)
+model = se.AdaBoostRegressor(model, n_estimators=400, random_state=7)  # 构建 n_estimators 棵不同权重的决策树
 model.fit(train_x, train_y)
 
 # 预测

@@ -22,7 +22,7 @@ train_x, test_x, train_y, test_y = x[:train_size], x[train_size:],\
                                    y[:train_size], y[train_size:]
 
 # 构建决策树模型, 训练模型
-model = st.DecisionTreeRegressor(max_depth=5)
+model = st.DecisionTreeRegressor(max_depth=5)  # 决策树的最大深度为 max_depth
 model.fit(train_x, train_y)
 
 # 预测
