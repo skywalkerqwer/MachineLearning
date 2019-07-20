@@ -7,36 +7,38 @@ import sklearn.ensemble as se
 import sklearn.model_selection as ms
 import matplotlib.pyplot as mp
 
+
 def f(s):
-	return str(s, encoding='utf-8')
+    return str(s, encoding='utf-8')
+
 
 # 读取文件
-data = np.loadtxt('../ml_data/car.txt', 
-	delimiter=',', dtype='U20', 
-	converters={0:f, 1:f, 2:f, 3:f, 4:f, 5:f, 6:f})
+data = np.loadtxt('../ml_data/car.txt',
+                  delimiter=',', dtype='U20',
+                  converters={0: f, 1: f, 2: f, 3: f, 4: f, 5: f, 6: f})
 # 整理训练集的输入与输出
 data = data.T
 train_x, train_y = [], []
 encoders = []
 for col in range(len(data)):
-	lbe = sp.LabelEncoder()
-	if col < len(data)-1: # 不是最后一列
-		train_x.append(lbe.fit_transform(data[col]))
-	else:
-		train_y = lbe.fit_transform(data[col])
-	encoders.append(lbe)  # 保存每列的标签编码器
+    lbe = sp.LabelEncoder()
+    if col < len(data) - 1:  # 不是最后一列
+        train_x.append(lbe.fit_transform(data[col]))
+    else:
+        train_y = lbe.fit_transform(data[col])
+    encoders.append(lbe)  # 保存每列的标签编码器
 
 train_x = np.array(train_x).T
 print(train_x)
 
 # 交叉验证 训练模型
-model = se.RandomForestClassifier(max_depth=6, 
-	n_estimators=140, random_state=7)
+model = se.RandomForestClassifier(max_depth=6,
+                                  n_estimators=140, random_state=7)
 # 使用validation curve选择最优超参数
 train_scores, test_scores = \
-	ms.validation_curve(model, train_x, 
-		train_y, 'n_estimators', 
-		np.arange(100, 200, 10), cv=5)
+    ms.validation_curve(model, train_x,
+                        train_y, 'n_estimators',
+                        np.arange(100, 200, 10), cv=5)
 
 # 画图显示超参数取值与模型性能之间的关系
 x = np.arange(100, 200, 10)
@@ -67,14 +69,12 @@ data = [
 data = np.array(data).T
 test_x, test_y = [], []
 for col in range(len(data)):
-	encoder = encoders[col]
-	if col<len(data)-1: 
-		test_x.append(encoder.transform(data[col]))
-	else:
-		test_y = encoder.transform(data[col])
+    encoder = encoders[col]
+    if col < len(data) - 1:
+        test_x.append(encoder.transform(data[col]))
+    else:
+        test_y = encoder.transform(data[col])
 test_x = np.array(test_x).T
 pred_test_y = model.predict(test_x)
 print(encoders[-1].inverse_transform(pred_test_y))
 print(encoders[-1].inverse_transform(test_y))
-
-

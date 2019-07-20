@@ -8,36 +8,38 @@ import sklearn.model_selection as ms
 import matplotlib.pyplot as mp
 import sklearn.metrics as sm
 
+
 def f(s):
-	return str(s, encoding='utf-8')
+    return str(s, encoding='utf-8')
+
 
 # 读取文件
-data = np.loadtxt('../ml_data/car.txt', 
-	delimiter=',', dtype='U20', 
-	converters={0:f, 1:f, 2:f, 3:f, 4:f, 5:f, 6:f})
+data = np.loadtxt('../ml_data/car.txt',
+                  delimiter=',', dtype='U20',
+                  converters={0: f, 1: f, 2: f, 3: f, 4: f, 5: f, 6: f})
 # 整理训练集的输入与输出
 data = data.T
 train_x, train_y = [], []
 encoders = []
 for col in range(len(data)):
-	lbe = sp.LabelEncoder()
-	if col < len(data)-1: # 不是最后一列
-		train_x.append(lbe.fit_transform(data[col]))
-	else:
-		train_y = lbe.fit_transform(data[col])
-	encoders.append(lbe) #保存每列的标签编码器
+    lbe = sp.LabelEncoder()
+    if col < len(data) - 1:  # 不是最后一列
+        train_x.append(lbe.fit_transform(data[col]))
+    else:
+        train_y = lbe.fit_transform(data[col])
+    encoders.append(lbe)  # 保存每列的标签编码器
 
 train_x = np.array(train_x).T
 print(train_x)
 
 # 交叉验证 训练模型
-model = se.RandomForestClassifier(max_depth=9, 
-	n_estimators=140, random_state=7)
+model = se.RandomForestClassifier(max_depth=9,
+                                  n_estimators=140, random_state=7)
 
 # # 通过学习曲线，获取最优训练集大小
 # train_sizes = np.arange(0.4, 0.8, 0.05)
 # _, train_scores, test_scores = \
-# 	ms.learning_curve(model, train_x, train_y, 
+# 	ms.learning_curve(model, train_x, train_y,
 # 		train_sizes=train_sizes, cv=5)
 
 # # 画图显示超参数取值与模型性能之间的关系
@@ -55,8 +57,8 @@ model = se.RandomForestClassifier(max_depth=9,
 
 # 通过学习曲线得到当使用70%做训练集时效果比较好
 train_x, test_x, train_y, test_y = \
-	ms.train_test_split(train_x, train_y, 
-		test_size=0.3, random_state=7)
+    ms.train_test_split(train_x, train_y,
+                        test_size=0.3, random_state=7)
 model.fit(train_x, train_y)
 
 # 针对测试集测试
@@ -75,14 +77,12 @@ data = [
 data = np.array(data).T
 test_x, test_y = [], []
 for col in range(len(data)):
-	encoder = encoders[col]
-	if col<len(data)-1: 
-		test_x.append(encoder.transform(data[col]))
-	else:
-		test_y = encoder.transform(data[col])
+    encoder = encoders[col]
+    if col < len(data) - 1:
+        test_x.append(encoder.transform(data[col]))
+    else:
+        test_y = encoder.transform(data[col])
 test_x = np.array(test_x).T
 pred_test_y = model.predict(test_x)
 print(encoders[-1].inverse_transform(pred_test_y))
 print(encoders[-1].inverse_transform(test_y))
-
-
